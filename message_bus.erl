@@ -1,4 +1,5 @@
 -module(message_bus).
+-author('ttuck101@gmail.com').
 -export([start/0, receive_msg/1]).
 
 receive_msg(Processor_List) ->
@@ -25,36 +26,46 @@ route_msg(Message, Processor_List) ->
 	case Message of
 		"Event" ->
 			%Send all events to processor C
-			case lists:keysearch(processorC, 1, Processor_List) of
-				false ->
-					io:format("Failed to route ~p~n", [Message]),
-					%print_Processor_List(Processor_List),
-					ok;
-				{value, {processorC, PId}} ->
-					io:format("About to route ~p~n", [Message]),
-					PId ! {event, "You have received an event"}
-			end;
+			send_to_processor(processorC, Message, Processor_List);
 		"Message" ->
 			%Send all messages to processor A
+			send_to_processor(processorA, Message, Processor_List);
+		"Command" ->
+			%Send all commands to processor B
+			send_to_processor(processorA, Message, Processor_List),
+			send_to_processor(processorB, Message, Processor_List)
+	end.
+
+send_to_processor(Processor, Message, Processor_List) ->
+	case Processor of
+		processorA ->
 			case lists:keysearch(processorA, 1, Processor_List) of
 				false ->
 					io:format("Failed to route ~p~n", [Message]),
-					%print_Processor_List(Processor_List),
 					ok;
 				{value, {processorA, PId}} ->
 					io:format("About to route ~p~n", [Message]),
 					PId ! {message, "You have received a message"}
 			end;
-		"Command" ->
-			%Send all commands to processor B
+
+		processorB ->
 			case lists:keysearch(processorB, 1, Processor_List) of
 				false ->
 					io:format("Failed to route ~p~n", [Message]),
-					%print_Processor_List(Processor_List),
 					ok;
 				{value, {processorB, PId}} ->
 					io:format("About to route ~p~n", [Message]),
 					PId ! {command, "You have received a command"}
+			end;
+
+		processorC ->
+			case lists:keysearch(processorC, 1, Processor_List) of
+				false ->
+					io:format("Failed to route ~p~n", [Message]),
+					ok;
+				{value, {processorC, PId}} ->
+					io:format("About to route ~p~n", [Message]),
+					PId ! {event, "You have received an event"}
 			end
 	end.
 

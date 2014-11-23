@@ -1,6 +1,6 @@
 -module(processorC).
 -author('ttuck101@gmail.com').
--export([start/1, connect/1]).
+-export([start/1, connect/1, stop/0]).
 
 connect(NodeName) ->
 	{bus, NodeName} ! {processorC, self()},
@@ -24,5 +24,5 @@ stop() ->
 	receive
 		after
 			infinity ->
-				ok;
+				ok
 	end.
