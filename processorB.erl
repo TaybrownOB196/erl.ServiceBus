@@ -3,6 +3,7 @@
 -export([start/1, connect/1, stop/0]).
 
 connect(NodeName) ->
+	init(),
 	{bus, NodeName} ! {processorB, self()},
 	send_msg(NodeName).
 
@@ -17,12 +18,11 @@ send_msg(NodeName) ->
 				send_msg(NodeName)
 	end.
 
+init() ->
+	process_flag(priority, low).
+
 start(NodeName) -> 	
 	spawn(processorB, connect, [NodeName]).
 
 stop() ->
-	receive
-		after
-			infinity ->
-				ok
-	end.
+	exit(self(), normal).

@@ -1,15 +1,17 @@
--module(processorC).
+-module(processorD).
 -author('ttuck101@gmail.com').
 -export([start/1, connect/1, stop/0]).
 
 connect(NodeName) ->
 	init(),
-	{bus, NodeName} ! {processorC, self()},
+	{bus, NodeName} ! {processorD, self()},
 	send_msg(NodeName).
 
 send_msg(NodeName) ->
-	{bus, NodeName} ! {message, "Command"},
 	receive
+		{message, Message} ->
+			io:format("~p~n", [Message]),
+			send_msg(NodeName);
 		{event, Message} ->
 			io:format("~p~n", [Message]),
 			send_msg(NodeName);
@@ -17,7 +19,7 @@ send_msg(NodeName) ->
 			io:format("~p~n", [Message]),
 			send_msg(NodeName)
 		after
-			3000 ->
+			5000 ->
 				send_msg(NodeName)
 	end.
 
@@ -25,7 +27,7 @@ init() ->
 	process_flag(priority, low).
 
 start(NodeName) -> 	
-	spawn(processorC, connect, [NodeName]).
+	spawn(processorD, connect, [NodeName]).
 
 stop() ->
 	exit(self(), normal).
