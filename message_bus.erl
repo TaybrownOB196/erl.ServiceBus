@@ -35,7 +35,7 @@ receive_msg(Processor_List, Count) ->
 			receive_msg(New_Processor_List, Count)
 		after
 			5000 ->
-				%io:format("Bus running~n", []),
+				io:format("Bus running~n", []),
 				receive_msg(Processor_List, 0)
 	end.
 
@@ -72,7 +72,6 @@ send_to_processor(Processor, Message, Processor_List) ->
 				{value, {processorA, PId}} ->
 					PId ! {message, Message}
 			end;
-
 		processorB ->
 			case lists:keysearch(processorB, 1, Processor_List) of
 				false ->
@@ -80,7 +79,6 @@ send_to_processor(Processor, Message, Processor_List) ->
 				{value, {processorB, PId}} ->
 					PId ! {command, Message}
 			end;
-
 		processorC ->
 			case lists:keysearch(processorC, 1, Processor_List) of
 				false ->
@@ -92,7 +90,6 @@ send_to_processor(Processor, Message, Processor_List) ->
 						Message == "Command" ->
 							PId ! {command, Message}
 					end
-					
 			end;
 		processorD ->
 			case lists:keysearch(processorD, 1, Processor_List) of

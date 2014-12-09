@@ -1,2 +1,3 @@
 *.beam
 *.txt
+database_conn.erl

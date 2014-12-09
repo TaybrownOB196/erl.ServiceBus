@@ -26,4 +26,4 @@ await_results() ->
 	end.
 
 stop() ->
-	exit(self(), normal).
+	exit(self(), no_reason).
